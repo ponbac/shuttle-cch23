@@ -19,9 +19,11 @@ async fn main() -> shuttle_axum::ShuttleAxum {
 }
 
 async fn day1_part2(Path(numbers): Path<String>) -> impl IntoResponse {
-    let xor_sum: u64 = numbers
+    println!("numbers: {}", numbers);
+
+    let xor_sum: i64 = numbers
         .split('/')
-        .map(|s| s.parse::<u64>().unwrap())
+        .map(|s| s.parse::<i64>().unwrap())
         .fold(0, |acc, n| acc ^ n);
 
     format!("{}", xor_sum.pow(3))
