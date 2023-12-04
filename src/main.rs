@@ -21,7 +21,8 @@ async fn main() -> shuttle_axum::ShuttleAxum {
         .route("/", get(hello_world))
         .route("/-1/error", get(error))
         .route("/1/*numbers", get(day1_part2))
-        .route("/4/strength", post(day4_part1));
+        .route("/4/strength", post(day4_part1))
+        .route("/4/strength", post(day4_part2));
 
     Ok(router.into())
 }
@@ -45,4 +46,14 @@ struct Reindeer {
 
 async fn day4_part1(Json(reindeers): Json<Vec<Reindeer>>) -> impl IntoResponse {
     format!("{}", reindeers.iter().map(|r| r.strength).sum::<u32>())
+}
+
+#[derive(Serialize, Deserialize)]
+struct Gigadeer {
+    name: String,
+    strength: u64,
+}
+
+async fn day4_part2(Json(gigadeers): Json<Vec<Gigadeer>>) -> impl IntoResponse {
+    todo!()
 }
