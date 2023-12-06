@@ -1,5 +1,5 @@
 use axum::{http::StatusCode, response::IntoResponse, Json};
-use serde::{Deserialize, Serialize};
+use serde::{ser::SerializeStruct, Deserialize, Serialize, Serializer};
 
 use crate::api_error::ApiError;
 
@@ -26,12 +26,11 @@ pub struct Gigadeer {
     candies_eaten_yesterday: i32,
 }
 
-#[derive(Serialize)]
 pub struct GigadeerStats {
-    fastest: String,
-    tallest: String,
-    magician: String,
-    consumer: String,
+    fastest: Gigadeer,
+    tallest: Gigadeer,
+    magician: Gigadeer,
+    consumer: Gigadeer,
 }
 
 pub async fn day4_part2(
@@ -52,21 +51,47 @@ pub async fn day4_part2(
     let consumer = find_max_by(|g| g.candies_eaten_yesterday);
 
     Ok(Json(GigadeerStats {
-        fastest: format!(
-            "Speeding past the finish line with a strength of {} is {}",
-            fastest.strength, fastest.name
-        ),
-        tallest: format!(
-            "{} is standing tall with his {} cm wide antlers",
-            tallest.name, tallest.antler_width
-        ),
-        magician: format!(
-            "{} could blast you away with a snow magic power of {}",
-            magician.name, magician.snow_magic_power
-        ),
-        consumer: format!(
-            "{} ate lots of candies, but also some {}",
-            consumer.name, consumer.favorite_food
-        ),
+        fastest: fastest.clone(),
+        tallest: tallest.clone(),
+        magician: magician.clone(),
+        consumer: consumer.clone(),
     }))
+}
+
+impl Serialize for GigadeerStats {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let mut state = serializer.serialize_struct("GigadeerStats", 4)?;
+        state.serialize_field(
+            "fastest",
+            &format!(
+                "Speeding past the finish line with a strength of {} is {}",
+                self.fastest.strength, self.fastest.name
+            ),
+        )?;
+        state.serialize_field(
+            "tallest",
+            &format!(
+                "{} is standing tall with his {} cm wide antlers",
+                self.tallest.name, self.tallest.antler_width
+            ),
+        )?;
+        state.serialize_field(
+            "magician",
+            &format!(
+                "{} could blast you away with a snow magic power of {}",
+                self.magician.name, self.magician.snow_magic_power
+            ),
+        )?;
+        state.serialize_field(
+            "consumer",
+            &format!(
+                "{} ate lots of candies, but also some {}",
+                self.consumer.name, self.consumer.favorite_food
+            ),
+        )?;
+        state.end()
+    }
 }
