@@ -3,7 +3,7 @@ use axum::{
     routing::{get, post},
     Router,
 };
-use days::{day1_both, day4_part1, day4_part2};
+use days::{day1_both, day4_part1, day4_part2, day6_both};
 
 mod api_error;
 mod days;
@@ -15,7 +15,8 @@ async fn main() -> shuttle_axum::ShuttleAxum {
         .route("/-1/error", get(error))
         .route("/1/*numbers", get(day1_both))
         .route("/4/strength", post(day4_part1))
-        .route("/4/contest", post(day4_part2));
+        .route("/4/contest", post(day4_part2))
+        .route("/6", post(day6_both));
 
     Ok(router.into())
 }
