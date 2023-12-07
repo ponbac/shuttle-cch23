@@ -121,7 +121,6 @@ pub async fn day7_part3(jar: CookieJar) -> impl IntoResponse {
         .unwrap_or_else(|| panic!("No recipe found in cookie jar!"))
         .value()
         .to_string();
-
     println!("Encoded recipe: {}", encoded_recipe);
 
     let recipe = general_purpose::STANDARD
@@ -130,7 +129,6 @@ pub async fn day7_part3(jar: CookieJar) -> impl IntoResponse {
         .into_iter()
         .map(|byte| byte as char)
         .collect::<String>();
-
     println!("Decoded recipe: {}", recipe);
 
     let request: CrazyRequest = serde_json::from_str(&recipe).unwrap();
